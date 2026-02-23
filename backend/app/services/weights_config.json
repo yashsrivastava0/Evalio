@@ -1,0 +1,62 @@
+{
+    "default": {
+        "w_performance": 0.20,
+        "w_battery": 0.15,
+        "w_camera": 0.15,
+        "w_display": 0.15,
+        "w_build": 0.10,
+        "w_price": 0.15,
+        "w_popularity": 0.10
+    },
+    "budget": {
+        "w_performance": 0.10,
+        "w_battery": 0.15,
+        "w_camera": 0.10,
+        "w_display": 0.10,
+        "w_build": 0.05,
+        "w_price": 0.40,
+        "w_popularity": 0.10
+    },
+    "camera": {
+        "w_performance": 0.10,
+        "w_battery": 0.10,
+        "w_camera": 0.40,
+        "w_display": 0.15,
+        "w_build": 0.05,
+        "w_price": 0.10,
+        "w_popularity": 0.10
+    },
+    "performance": {
+        "w_performance": 0.40,
+        "w_battery": 0.10,
+        "w_camera": 0.05,
+        "w_display": 0.10,
+        "w_build": 0.10,
+        "w_price": 0.15,
+        "w_popularity": 0.10
+    },
+    "battery": {
+        "w_performance": 0.10,
+        "w_battery": 0.40,
+        "w_camera": 0.05,
+        "w_display": 0.10,
+        "w_build": 0.10,
+        "w_price": 0.15,
+        "w_popularity": 0.10
+    },
+    "display": {
+        "w_performance": 0.10,
+        "w_battery": 0.10,
+        "w_camera": 0.05,
+        "w_display": 0.40,
+        "w_build": 0.10,
+        "w_price": 0.15,
+        "w_popularity": 0.10
+    },
+    "_meta": {
+        "version": 1,
+        "locked": false,
+        "calibrated_at": null,
+        "notes": "Default weights — calibrate via calibrate_weights.py against golden dataset before production lock"
+    }
+}
