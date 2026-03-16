@@ -1,0 +1,13 @@
+{
+  "include": ["backend", "scraper"],
+  "extraPaths": [
+    "backend",
+    ".",
+    "C:/Users/Yash Srivastava/AppData/Roaming/Python/Python314/site-packages"
+  ],
+  "pythonVersion": "3.11",
+  "pythonPath": "C:/Python314/python.exe",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning",
+  "reportMissingModuleSource": "none"
+}

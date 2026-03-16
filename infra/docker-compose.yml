@@ -1,0 +1,103 @@
+version: "3.9"
+
+services:
+  # ── Postgres + pgvector ──
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: ag-postgres
+    environment:
+      POSTGRES_DB: evalio
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── Redis ──
+  redis:
+    image: redis:7-alpine
+    container_name: ag-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── FastAPI Backend ──
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: evalio-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/evalio
+      DATABASE_SYNC_URL: postgresql://postgres:postgres@postgres:5432/evalio
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../backend/app:/app/app
+
+  # ── Celery Worker ──
+  celery-worker:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: ag-celery
+    command: celery -A app.workers.tasks:celery_app worker --loglevel=info --concurrency=2
+    env_file:
+      - ../.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/evalio
+      DATABASE_SYNC_URL: postgresql://postgres:postgres@postgres:5432/evalio
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ── Scraper ──
+  scraper:
+    build:
+      context: ../scraper
+      dockerfile: Dockerfile
+    container_name: ag-scraper
+    env_file:
+      - ../.env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/evalio
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    profiles:
+      - scraping
+
+volumes:
+  pg_data:
+  redis_data:
