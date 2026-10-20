@@ -60,3 +60,10 @@ logs/
 
 # Alembic
 alembic/versions/__pycache__/
+
+# Local notes and captured test output
+EVALIO_PERSISTENT_CONTEXT.md
+evalio_context_update_*.txt
+*_test_output.txt
+test_output.txt
+phase7_*.txt
